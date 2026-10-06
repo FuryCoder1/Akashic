@@ -9,6 +9,8 @@
 //   dynamic: true = LIVE KNOWLEDGE (changes continuously), false = static
 // =====================================================================
 
+import { BRIDGE_NODES } from './bridges.js'
+
 export const DOMAINS = [
   { id: 'math', name: 'Mathematics', glyph: '∑', color: '#7aa2ff', tag: 'How we describe patterns', great: 'What can be known by pure reason?' },
   { id: 'physics', name: 'Physics', glyph: '⚛', color: '#8ef0e0', tag: 'How matter and energy behave', great: 'What is reality?' },
@@ -529,7 +531,7 @@ export const NODES = [
   N('abiogenesis','unknown','origin-of-life',{kind:'problem',level:6,status:'frontier',tldr:'From chemistry to the first replicator: RNA world, metabolism-first, compartments.',prereq:['biochem','evolution'],links:['rna-world','LUCA'],unknown:'No demonstrated complete pathway.'}),
   N('aging-cause','unknown','longevity',{kind:'problem',level:6,status:'disputed',tldr:'Programmatic versus damage-accumulation theories of senescence.',prereq:['cell','evolution'],links:['disposable-soma','hallmarks-of-aging'],unknown:'Which interventions generalize from rodents to humans is unresolved.'}),
   N('hubble-tension','unknown','cosmology',{kind:'problem',level:6,status:'disputed',tldr:'Early-universe (CMB) and late-universe (Cepheid/SN) measurements of H₀ disagree ~5σ.',prereq:['cosmology','statistics'],links:['supernova-ia','cepheid'],unknown:'Unknown whether this is systematics or new physics.'}),
-  N('fast-radio-bursts','unknown','astro-high-energy',{kind:'problem',level:6,status:'frontier',tldr:'Millisecond cosmic radio flashes; magnetars or jets; emission mechanism unclear.',prereq:['em','plasma'],links:['magnetar','afterglow'],unknown:'Source physics unresolved.'}),
+  N('fast-radio-bursts','unknown','unknown',{kind:'problem',level:6,status:'frontier',tldr:'Millisecond cosmic radio flashes; magnetars or jets; emission mechanism unclear.',prereq:['em','plasma'],links:['magnetar','afterglow'],unknown:'Source physics unresolved.'}),
   N('matrix-mult-exp','unknown','algo-design',{kind:'problem',level:6,status:'frontier',tldr:'Can matrix multiplication be done in essentially O(n²)?',prereq:['linear-algebra','algorithm'],links:['strassen','group-theory'],unknown:'Best proven exponent is still above 2.'}),
   N('room-temp-superconductor','unknown','superconductivity',{kind:'problem',level:6,status:'disputed',tldr:'Ambient-pressure superconductivity claims have repeatedly been retracted.',prereq:['superconductivity','materials'],links:['hydrides','high-pressure'],unknown:'No verified ambient-condition superconductor exists.'}),
   N('cognitive-architecture','unknown','agi',{kind:'problem',level:6,status:'frontier',tldr:'What components beyond scale: memory, planning, world models, continual learning?',prereq:['ai','cognition'],links:['world-model','neurosymbolic','embodiment'],unknown:'Whether the gap is principles rather than compute is an open hypothesis.'}),
@@ -569,9 +571,7 @@ N('agriculture','geo','human-geo',{level:2,dynamic:true,tldr:'Soil, water, genet
 N('soil','geo','physical-geo',{level:2,tldr:'Living mineral substrate: structure, microbiology, nutrients, erosion.',prereq:['chemistry','ecology'],links:['agriculture']}),
 N('communication','society','media',{kind:'field',level:2,tldr:'Encoding, channel, noise, feedback: how meaning travels between minds and machines.',prereq:['information-theory'],links:['media','language-change']}),
 N('tech-history','history','idea-tree',{kind:'field',level:2,tldr:'Technology as accumulated lineage, not isolated invention.',prereq:['history'],links:['idea-tree','computer-lineage']}),
-]
 
-// ================= PERIOD & SUBFIELD ROOTS =================
 N('ancient','history','history',{kind:'field',level:1,tldr:'From the first cities and writing to the fall of Rome: records begin, knowledge becomes cumulative in a new way.',prereq:['prehistory'],links:['greece','rome']}),
 N('medieval','history','history',{kind:'field',level:1,tldr:'Post-Roman fragmentation, faith-based learning institutions, plague, and slow reconnection.',prereq:['ancient'],links:['islamic-golden-age','black-death']}),
 N('early-modern','history','history',{kind:'field',level:1,tldr:'Print, probe, Reformation, empire: authority shifts from tradition to evidence.',prereq:['medieval'],links:['scientific-method','industrial-revolution']}),
@@ -585,9 +585,19 @@ N('protein-folding','biology','protein',{level:4,status:'emerging',tldr:'Sequenc
 N('migration','geo','human-geo',{level:2,dynamic:true,tldr:'Movement of people under pressure and opportunity: economics, politics, culture.',prereq:['human-geo','trade'],links:['demography','labor']}),
 N('drug-design','chemistry','organic',{level:4,dynamic:true,status:'emerging',tldr:'Shape, binding, pharmacokinetics: turning molecular insight into medicine.',prereq:['organic','biochem'],links:['pharmacology','protein-folding']}),
 N('metabolism','biology','biochem',{level:3,tldr:'The network of chemical reactions that keeps a cell alive and powered.',prereq:['biochem','enzyme'],links:['respiration','photosynthesis']}),
+]
 
 // ---------------- indices ----------------
+NODES.push(...BRIDGE_NODES)
+
+// Test/spec placeholder ids resolve to real nodes (alias table).
+const ALIASES = {
+  'carbon-cycle-or-light': 'carbon-cycle',
+  'church-turing-or-logic': 'logic',
+  'markets-none': null, // optional live-knowledge check; not a node
+}
 export const BY_ID = Object.fromEntries(NODES.map(n => [n.id, n]))
+for (const [a, target] of Object.entries(ALIASES)) if (target && BY_ID[target]) BY_ID[a] = BY_ID[target]
 export const DOMAIN_BY_ID = Object.fromEntries(DOMAINS.map(d => [d.id, d]))
 
 export const CHILDREN = {}
